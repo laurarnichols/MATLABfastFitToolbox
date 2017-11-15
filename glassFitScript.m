@@ -118,9 +118,9 @@ for i = 1:length(composition)
             if numSkipped == skip
                 % Set preferences for fitting
                 figNum =  n;
-                fitMethod = 5; % 1 = basic, 2 = single GA, 3 = background GA
+                fitMethod = 3; % 1 = basic, 2 = single GA, 3 = background GA
                 chunkCutMethod = 2; % 1 = manual, 2 = auto
-                linearCutMethod = 6; % 1 = none, 2 = manual, 3 = GA
+                linearCutMethod = 1; % 1 = none, 2 = manual, 3 = GA
                 loopNum = 100;
                 
                 % Send to glassFit()

@@ -87,7 +87,9 @@ while i <= numChunks
 end
 
 %--------------------------------------------------------------------------
-% If using basic fit or single GA, chunks need to be fit
+% If using basic fit or single GA, all chunks need to be fit
+% If using background GA, get a base fit for nonlinear
+% chunks
 % individually
 if fitMethod == 1 || fitMethod == 2 || fitMethod ==3
     % Fit stretched exponential chunks one at a time using 
@@ -115,7 +117,9 @@ if fitMethod == 1 || fitMethod == 2 || fitMethod ==3
         end
         
         % Tell user your progress
-        eval(sprintf('display(''%d/%d nonlinear chunks fit.'')', i, countFit));
+        if fitMethod ~= 3
+            eval(sprintf('display(''%d/%d nonlinear chunks fit.'')', i, countFit));
+        end
         
         % Evaluate fit functions at the x-values for the
         % given chunk to get an array of fitted x and y values
@@ -124,24 +128,26 @@ if fitMethod == 1 || fitMethod == 2 || fitMethod ==3
     
 %--------------------------------------------------------------------------    
     % Fit linear chunks, if any
-    linearCoefs = [];
-    for i = 1:countLinear
-        % Use basic MATLAB polynomial fit
-        eval(sprintf('[fitResultLinear, ~] = fit(linearChunk%d(:,1), linearChunk%d(:,2), ''poly1'');', i, i));
-        
-        % Get m and b from fit results
-        m = fitResultLinear.p1;
-        b = fitResultLinear.p2;
-        linearCoefs = [linearCoefs m b]; %#ok<AGROW>
-        
-        % Put chi squared and fitted functions in arrays
-        % to return
-        eval(sprintf('chiSquaredLinear%d = getChiSquared(linearChunk%d(:,1), linearChunk%d(:,1), fitResultLinear);', i, i, i));
-        eval(sprintf('fittedLinear%d = [unshiftedLinearChunk%d(:,1) fitResultLinear(linearChunk%d(:,1))];', i, i, i));
-    end
+    if fitMethod ~= 3
+        linearCoefs = [];
+        for i = 1:countLinear
+            % Use basic MATLAB polynomial fit
+            eval(sprintf('[fitResultLinear, ~] = fit(linearChunk%d(:,1), linearChunk%d(:,2), ''poly1'');', i, i));
 
-    % Update user on progress
-    fprintf('All linear portions are fit.')
+            % Get m and b from fit results
+            m = fitResultLinear.p1;
+            b = fitResultLinear.p2;
+            linearCoefs = [linearCoefs m b]; %#ok<AGROW>
+
+            % Put chi squared and fitted functions in arrays
+            % to return
+            eval(sprintf('chiSquaredLinear%d = getChiSquared(linearChunk%d(:,1), linearChunk%d(:,1), fitResultLinear);', i, i, i));
+            eval(sprintf('fittedLinear%d = [unshiftedLinearChunk%d(:,1) fitResultLinear(linearChunk%d(:,1))];', i, i, i));
+        end
+
+        % Update user on progress
+        fprintf('All linear portions are fit.')
+    end
 end
 
 %--------------------------------------------------------------------------
@@ -160,16 +166,7 @@ if fitMethod == 3
         boundsBackground = [0 -max(y)/4 0 0; 50 0 1 x(end)/4]; 
     end
     
-%--------------------------------------------------------------------------
-    % Create the boundaries for the nonlinear curves starting
-    % with the background bounds first
     boundsNonLin = boundsBackground;
-    
-    for i = 1:countFit
-        eval(sprintf('boundsCoefs = [0 -50 0 0; 50 50 1 fitChunk%d(end,1)/2];', i, i));
-        boundsNonLin = [boundsNonLin boundsCoefs]; %#ok<AGROW>
-    end
-
 %--------------------------------------------------------------------------
     % Create boundaries for linear curves, if any
     boundsLinear = [];
@@ -182,6 +179,10 @@ if fitMethod == 3
     for i = 2:countLinear
         boundsLinear = [boundsLinear boundsM boundsB]; %#ok<AGROW>
     end
+
+%--------------------------------------------------------------------------
+    % Tell user you are about to start fitting process
+    fprintf('\nStarting the fitting process. \n');
     
 %--------------------------------------------------------------------------
     % Put bounds together and send to GAFitBackground

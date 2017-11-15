@@ -110,8 +110,10 @@ numStrExpChunks = numChunks - sum(wasCut);
 testPlot(1, x, y, 0, wasCut, unshiftedChunks, fitChunks, coefs, 1)
 
 diff = 0.1*coefs;
-bounds(1,5:end) = coefs - diff;
-bounds(2,5:end) = coefs + diff;
+chunkBounds = [coefs-diff; coefs+diff];
+
+newBounds = [bounds(:,1:4) chunkBounds bounds(:,5:end)];
+bounds = newBounds;
 
 % Adjust bounds if needed
 for i = 1:numStrExpChunks

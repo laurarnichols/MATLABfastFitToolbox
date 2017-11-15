@@ -188,7 +188,7 @@ if fitMethod == 3
     % Put bounds together and send to GAFitBackground
     bounds = [boundsNonLin boundsLinear];
     tic;
-    [chiSquared, fitresult, chiSquaredLinear, fitresultLinear] = testGAFitBackground(smoothX, smoothY, coefs, bounds, fitChunksSmooth, allCutIndexSmooth, wasCut, unshiftedChunksSmooth);
+    [chiSquared, fitresult, chiSquaredLinear, fitresultLinear] = GAFitBackground(smoothX, smoothY, coefs, bounds, fitChunksSmooth, allCutIndexSmooth, wasCut, unshiftedChunksSmooth);
     toc
 %-------------------------------------------------------------------------- 
     % Put all of the fit results in arrays

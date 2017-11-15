@@ -1,4 +1,4 @@
-function [ sorted ] = rankFitBackground4( population, fitChunks, unshiftedChunks, allCutIndex, wasCut, lengthX ) 
+function [ sorted, time ] = rankFitBackground4( population, fitChunks, unshiftedChunks, allCutIndex, wasCut, lengthX ) 
 %==========================================================================
 % This function will rank the different variable combinations
 % in the population based on the chi squared. It will
@@ -61,6 +61,10 @@ while i <= numChunks
     end
 end
 
+if countFit ~= 4
+    error(['You are in the specific ranking function for 4 chunks, but you have ' int2str(countFit) ' chunks.\n']);
+end
+
 %--------------------------------------------------------------------------
 % Check to make sure number of variables matches what
 % you would expect
@@ -69,32 +73,31 @@ if numVars ~= (4*(countFit+1) + 2*countLinear)
 end
 
 %--------------------------------------------------------------------------
-
-% Get background ceofficients
+% Get background coefficients
 a1B = population(:,1); 
 a2B = population(:,2); 
 betaB = population(:,3); 
 tauB = population(:,4); 
+
 %--------------------------------------------------------------------------
 % Get other nonlinear coefficients 
-
-% Preallocate for speed
-a1 = zeros(nInds,countFit);
-a2 = zeros(nInds,countFit);
-beta = zeros(nInds,countFit);
-tau = zeros(nInds,countFit);
-
-% Set up loop variable
-count = 0;
-
 % Populate coefficients
-for i = 5:4:4*(countFit+1)
-    count = count + 1;
-    a1(:,count) = population(:,i);
-    a2(:,count) = population(:,i+1);
-    beta(:,count) = population(:,i+2);
-    tau(:,count) = population(:,i+3);
-end
+a1_1 = population(:,5);
+a2_1 = population(:,6);
+beta_1 = population(:,7);
+tau_1 = population(:,8);
+a1_2 = population(:,9);
+a2_2 = population(:,10);
+beta_2 = population(:,11);
+tau_2 = population(:,12);
+a1_3 = population(:,13);
+a2_3 = population(:,14);
+beta_3 = population(:,15);
+tau_3 = population(:,16);
+a1_4 = population(:,17);
+a2_4 = population(:,18);
+beta_4 = population(:,19);
+tau_4 = population(:,20);
 
 %--------------------------------------------------------------------------
 % Get linear coefficients
@@ -157,17 +160,17 @@ if countLinear == 4
     % Fit nonlinear portion
     parfor i = 1:nInds
         % Get fit y values for each nonlinear chunk
-        yFit1 = (a1(i,1) - a2(i,1)*exp(-(x1Shifted/tau(i,1)).^beta(i,1)))...
+        yFit1 = (a1_1(i) - a2_1(i)*exp(-(x1Shifted/tau_1(i)).^beta_1(i)))...
               + (a1B(i) - a2B(i)*exp(-(x1/tauB(i)).^betaB(i)));
 
-        yFit2 = (a1(i,2) - a2(i,2)*exp(-(x2Shifted/tau(i,2)).^beta(i,2)))...
+        yFit2 = (a1_2(i) - a2_2(i)*exp(-(x2Shifted/tau_2(i)).^beta_2(i)))...
               + (a1B(i) - a2B(i)*exp(-(x2/tauB(i)).^betaB(i)));
 
-        yFit3 = (a1(i,3) - a2(i,3)*exp(-(x3Shifted/tau(i,3)).^beta(i,3)))...
+        yFit3 = (a1_3(i) - a2_3(i)*exp(-(x3Shifted/tau_3(i)).^beta_3(i)))...
               + (a1B(i) - a2B(i)*exp(-(x3/tauB(i)).^betaB(i)));
 
-        yFit4 = (a1(i,4) - a2(i,4)*exp(-(x4Shifted/tau(i,4)).^beta(i,4)))...
-              + (a1B(i) - a2B(i)*exp(-(x4/tauB(i)).^betaB(i))); %#ok<PFBNS>
+        yFit4 = (a1_4(i) - a2_4(i)*exp(-(x4Shifted/tau_4(i)).^beta_4(i)))...
+              + (a1B(i) - a2B(i)*exp(-(x4/tauB(i)).^betaB(i))); 
 
 %--------------------------------------------------------------------------
         % Get fit y values for each linear chunk
@@ -181,7 +184,7 @@ if countLinear == 4
               + (a1B(i) - a2B(i)*exp(-(x7/tauB(i)).^betaB(i)));
 
         yFit8 = m(i,3)*x8Shifted + b(i,3) ...
-              + (a1B(i) - a2B(i)*exp(-(x8/tauB(i)).^betaB(i))); %#ok<PFBNS>
+              + (a1B(i) - a2B(i)*exp(-(x8/tauB(i)).^betaB(i))); 
 
 %--------------------------------------------------------------------------
         % Get chi squared values for each nonlinear chunk
@@ -197,20 +200,21 @@ if countLinear == 4
     
 %--------------------------------------------------------------------------
 else
+    start = tic;
     % Fit nonlinear portion
-    for i = 1:nInds
+    parfor i = 1:nInds
         % Get fit y values for each nonlinear chunk
-        yFit1 = (a1(i,1) - a2(i,1)*exp(-(x1Shifted/tau(i,1)).^beta(i,1)))...
+        yFit1 = (a1_1(i) - a2_1(i)*exp(-(x1Shifted/tau_1(i)).^beta_1(i)))...
               + (a1B(i) - a2B(i)*exp(-(x1/tauB(i)).^betaB(i)));
 
-        yFit2 = (a1(i,2) - a2(i,2)*exp(-(x2Shifted/tau(i,2)).^beta(i,2)))...
+        yFit2 = (a1_2(i) - a2_2(i)*exp(-(x2Shifted/tau_2(i)).^beta_2(i)))...
               + (a1B(i) - a2B(i)*exp(-(x2/tauB(i)).^betaB(i)));
 
-        yFit3 = (a1(i,3) - a2(i,3)*exp(-(x3Shifted/tau(i,3)).^beta(i,3)))...
+        yFit3 = (a1_3(i) - a2_3(i)*exp(-(x3Shifted/tau_3(i)).^beta_3(i)))...
               + (a1B(i) - a2B(i)*exp(-(x3/tauB(i)).^betaB(i)));
 
-        yFit4 = (a1(i,4) - a2(i,4)*exp(-(x4Shifted/tau(i,4)).^beta(i,4)))...
-              + (a1B(i) - a2B(i)*exp(-(x4/tauB(i)).^betaB(i))); %#ok<PFBNS>
+        yFit4 = (a1_4(i) - a2_4(i)*exp(-(x4Shifted/tau_4(i)).^beta_4(i)))...
+              + (a1B(i) - a2B(i)*exp(-(x4/tauB(i)).^betaB(i))); 
 
 %--------------------------------------------------------------------------
         % Get chi squared values for each chunk
@@ -219,6 +223,7 @@ else
                       + sum((yFit3 - y3).^2) ...
                       + sum((yFit4 - y4).^2);
     end
+    time = toc(start);
 
 %--------------------------------------------------------------------------
     % Fit linear portion
@@ -246,4 +251,3 @@ for i = 1:length(population)
 end
 
 end
-

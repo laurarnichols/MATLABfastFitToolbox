@@ -69,9 +69,35 @@ function [ chiSquared, fitresult, chiSquaredLinear, fitresultLinear ] = GAFitBac
 % Contact: lnichols11@my.apsu.edu
 %==========================================================================
 
+% Get the number of total chunks
+numChunks = length(allCutIndex) - 1;
+numStrExpChunks = length(wasCut);
+
+% Set up loop variables
+countFit = 0;
+countLinear = 0;
+i = 1;
+    
+%--------------------------------------------------------------------------
+% Break up chunks
+while i <= numChunks
+    countFit = countFit + 1;
+    eval(sprintf('fitChunk%d = fitChunks{:,i};', countFit));
+    eval(sprintf('unshiftedChunk%d = unshiftedChunks{:,i};', countFit));
+    i = i + 1;
+    if wasCut(countFit)
+        countLinear = countLinear + 1;
+        eval(sprintf('linearChunk%d = fitChunks{:,i};', countLinear));
+        eval(sprintf('unshiftedLinearChunk%d = unshiftedChunks{:,i};', countLinear));
+        i = i + 1;
+    end
+end
+
+%--------------------------------------------------------------------------
 % Set this value to 1 if you want to look at the 
 % background
 testing = 0;
+time = 0;
 
 % Make sure the bounds matrix is the right size
 [numBounds, numVars] = size(bounds);
@@ -82,6 +108,12 @@ numChunks = length(allCutIndex) - 1;
 numStrExpChunks = numChunks - sum(wasCut);
 
 testPlot(1, x, y, 0, wasCut, unshiftedChunks, fitChunks, coefs, 1)
+
+diff = 0.1*coefs;
+chunkBounds = [coefs-diff; coefs+diff];
+
+newBounds = [bounds(:,1:4) chunkBounds bounds(:,5:end)];
+bounds = newBounds;
 
 % Adjust bounds if needed
 for i = 1:numStrExpChunks
@@ -94,7 +126,7 @@ end
 
 %--------------------------------------------------------------------------
 % Set parameters for optimization
-nInds = 500; 
+nInds = 3000; 
 nParents = floor(nInds*0.75);
 
 %--------------------------------------------------------------------------
@@ -102,7 +134,17 @@ nParents = floor(nInds*0.75);
 population = generatePop(bounds, nInds);
 
 % Initialize loop variables
-numGens = 50;
+numGens = 3000;
+
+% Set up a paralllel pool if you will use it (4 chunks)
+if numChunks == 4
+    p = gcp('nocreate'); 
+    
+    % Create new pool only if one is not currently running
+    if isempty(p)
+        parpool;
+    end
+end
 
 % Give user progress
 h = waitbar(0,'Running through generations');
@@ -124,14 +166,15 @@ for gen = 1:numGens
     % Rank the population based on chi squared for 
     if numChunks == 4
         % 4 chunks
-        population = rankFitBackground4(population, ...
+        [population, newTime] = rankFitBackground4(population, ...
                         fitChunks, unshiftedChunks, ...
                         allCutIndex, wasCut);
+        time = time + newTime;
     else
         % Arbitrary number of chunks
         population = rankFitBackgroundGen(population, ...
-                        fitChunks, unshiftedChunks, ...
-                        allCutIndex, wasCut);
+                        fitChunks, allCutIndex, wasCut, ...
+                        unshiftedChunks);
     end
         
     % Select parents and breed
@@ -151,7 +194,7 @@ end
 % Close the progress bar
 close(h)
 display('Final solution found.')
-
+time
 %--------------------------------------------------------------------------
 % Seperate chunks from cell arrays into different
 % variables
@@ -271,10 +314,10 @@ for i = 1:countLinear
     eval(sprintf('chiSquaredLinear(i) = getChiSquared(linearChunk%d(:,1), linearChunk%d(:,2), fitresultLinear{1,i});', i, i));
 end
 
+
 % If you did not cut any chunks, set fitresultLinear to 0 so
 % that something is returned
 if countLinear == 0
     fitresultLinear = 0;
 end
 end
-

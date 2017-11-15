@@ -1,4 +1,4 @@
-function [ sorted, time ] = testrankFitBackground4( population, fitChunks, unshiftedChunks, allCutIndex, wasCut, lengthX ) 
+function [ sorted, time ] = rankFitBackground4( population, fitChunks, unshiftedChunks, allCutIndex, wasCut, lengthX ) 
 %==========================================================================
 % This function will rank the different variable combinations
 % in the population based on the chi squared. It will

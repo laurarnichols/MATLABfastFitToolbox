@@ -254,4 +254,3 @@ if fitMethod == 3
     error('Quitting for debugging.');
 end 
 end
-

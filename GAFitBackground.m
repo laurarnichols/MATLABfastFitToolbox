@@ -1,4 +1,4 @@
-function [ chiSquared, fitresult, chiSquaredLinear, fitresultLinear ] = testGAFitBackground( x, y, coefs, bounds, fitChunks, allCutIndex, wasCut, unshiftedChunks )
+function [ chiSquared, fitresult, chiSquaredLinear, fitresultLinear ] = GAFitBackground( x, y, coefs, bounds, fitChunks, allCutIndex, wasCut, unshiftedChunks )
 %==========================================================================
 % This function will try to fit the given chunk to a stretched
 % exponential curve using the given boundaries for points 
@@ -156,7 +156,7 @@ for gen = 1:numGens
     % Rank the population based on chi squared for 
     if numChunks == 4
         % 4 chunks
-        [population, newTime] = testrankFitBackground4(population, ...
+        [population, newTime] = rankFitBackground4(population, ...
                         fitChunks, unshiftedChunks, ...
                         allCutIndex, wasCut);
         time = time + newTime;

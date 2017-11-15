@@ -57,8 +57,13 @@ function [fitted, chiSquared, coefs] = fastFit(x, y, figNum, fitMethod, chunkCut
 % Contact: lnichols11@my.apsu.edu
 %==========================================================================
 
-if nargin < 5
+if nargin < 5 || (chunkCutMethod ~= 1 && chunkCutMethod ~= 2)
     clc
+    if chunkCutMethod ~= 1 && chunkCutMethod ~= 2
+        fprintf(['\nYour initial input for chunk cut method' ...
+        ' was not an\noption. \nPlease reselect.\n']);
+    end
+    
     request = ['\nWhat method would you like to use\n to cut the chunks?' ...
                 '\n\t 1) Manual' ...
                 '\n\t 2) Automated\n'];
@@ -101,8 +106,13 @@ end
 %--------------------------------------------------------------------------
 % Get chunks shifted to zero and fit
 
-if nargin < 4
+if nargin < 4 || (fitMethod ~= 1 && fitMethod ~= 2 && fitMethod ~= 3)
    clc
+   if fitMethod ~= 1 && fitMethod ~= 2 && fitMethod ~= 3
+        fprintf(['\nYour initial input for fit method' ...
+        ' was not an\noption. \nPlease reselect.\n']);
+   end
+    
    request = ['\nWhat fitting method would you like to use?' ...
                 '\n\t 1) Basic MATLAB fitting' ...
                 '\n\t 2) GA with single function' ...
@@ -124,8 +134,13 @@ if fitMethod == 1 && nargin < 7
     loopNum = getAndTestInput(request, check1, message1, check2, message2);
 end
 
-if nargin < 6
+if nargin < 6 || (linearCutMethod ~= 1 && linearCutMethod ~= 2 && linearCutMethod ~= 3)
     clc
+    if linearCutMethod ~= 1 && linearCutMethod ~= 2 && linearCutMethod ~= 3
+        fprintf(['\nYour initial input for linear cut method' ...
+        ' was not an\noption. \nPlease reselect.\n']);
+    end
+   
     request = ['\nWhat method would you like to use\n to cut the linear portion?' ...
                 '\n\t 1) No cut' ...
                 '\n\t 2) Manually cut' ...

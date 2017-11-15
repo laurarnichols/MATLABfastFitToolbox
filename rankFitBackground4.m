@@ -62,7 +62,7 @@ while i <= numChunks
 end
 
 if countFit ~= 4
-    error(['You are in the specific ranking function for 4 chunks, but you have ' int2str(countFit) ' chunks.\n');
+    error(['You are in the specific ranking function for 4 chunks, but you have ' int2str(countFit) ' chunks.\n']);
 end
 
 %--------------------------------------------------------------------------

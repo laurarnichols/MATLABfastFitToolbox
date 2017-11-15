@@ -304,6 +304,7 @@ for i = 1:countLinear
     eval(sprintf('chiSquaredLinear(i) = getChiSquared(linearChunk%d(:,1), linearChunk%d(:,2), fitresultLinear{1,i});', i, i));
 end
 
+
 % If you did not cut any chunks, set fitresultLinear to 0 so
 % that something is returned
 if countLinear == 0

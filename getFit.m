@@ -88,6 +88,8 @@ end
 
 %--------------------------------------------------------------------------
 % If using basic fit or single GA, chunks need to be fit
+% If using background GA, get a base fit for nonlinear
+% chunks
 % individually
 if fitMethod == 1 || fitMethod == 2 || fitMethod ==3
     % Fit stretched exponential chunks one at a time using 
@@ -177,6 +179,10 @@ if fitMethod == 3
     for i = 2:countLinear
         boundsLinear = [boundsLinear boundsM boundsB]; %#ok<AGROW>
     end
+    
+%--------------------------------------------------------------------------
+    % Tell user you are about to start fitting process
+    fprintf('\nStarting the fitting process. \n');
     
 %--------------------------------------------------------------------------
     % Put bounds together and send to GAFitBackground

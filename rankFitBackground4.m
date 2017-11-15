@@ -61,6 +61,10 @@ while i <= numChunks
     end
 end
 
+if countFit ~= 4
+    error(['You are in the specific ranking function for 4 chunks, but you have ' int2str(countFit) ' chunks.\n');
+end
+
 %--------------------------------------------------------------------------
 % Check to make sure number of variables matches what
 % you would expect
@@ -69,8 +73,7 @@ if numVars ~= (4*(countFit+1) + 2*countLinear)
 end
 
 %--------------------------------------------------------------------------
-
-% Get background ceofficients
+% Get background coefficients
 a1B = population(:,1); 
 a2B = population(:,2); 
 betaB = population(:,3); 

@@ -1,4 +1,4 @@
-function [ sorted ] = rankFitBackground( population, fitChunks, allCutIndex, wasCut, unshiftedChunks )
+function [ sorted ] = rankFitBackgroundGen( population, fitChunks, allCutIndex, wasCut, unshiftedChunks )
 %==========================================================================
 % This function will rank the different variable combinations
 % in the population based on the chi squared. It will

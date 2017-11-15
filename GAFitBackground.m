@@ -136,6 +136,16 @@ population = generatePop(bounds, nInds);
 % Initialize loop variables
 numGens = 3000;
 
+% Set up a paralllel pool if you will use it (4 chunks)
+if numChunks == 4
+    p = gcp('nocreate'); 
+    
+    % Create new pool only if one is not currently running
+    if isempty(p)
+        parpool;
+    end
+end
+
 % Give user progress
 h = waitbar(0,'Running through generations');
 
@@ -163,8 +173,8 @@ for gen = 1:numGens
     else
         % Arbitrary number of chunks
         population = rankFitBackgroundGen(population, ...
-                        smoothFitChunks, smoothUnshiftedChunks, ...
-                        allCutIndex, wasCut);
+                        fitChunks, allCutIndex, wasCut, ...
+                        unshiftedChunks);
     end
         
     % Select parents and breed

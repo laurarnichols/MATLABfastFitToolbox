@@ -147,11 +147,19 @@ if numChunks == 4
 end
 
 % Give user progress
-h = waitbar(0,'Running through generations');
+h = waitbar(0,['Running through generations... ' ...
+    '(0/' int2str(numGens) ')'], ...
+    'CreateCancelBtn', 'setappdata(gcbf,''canceling'',1)');
 
+setappdata(h,'canceling',0)
 %--------------------------------------------------------------------------
 % Run through the generations
 for gen = 1:numGens
+    % Check for Cancel button press
+    if getappdata(h,'canceling')
+        break
+    end
+    
     % Check to make sure variables are in bounds
     for i = 1:nInds
         for j = 1:numVars
@@ -188,11 +196,12 @@ for gen = 1:numGens
     % Put kids in new population
     population(1:nParents, :) = mutTopDogs;
     population((nInds-nParents+1):nInds, :) = topDogKids;
-    waitbar(gen/numGens)
+    waitbar(gen/numGens,h,['Running through generations... ' ...
+    '(' int2str(gen) '/' int2str(numGens) ')'])
 end
 
 % Close the progress bar
-close(h)
+delete(h)
 display('Final solution found.')
 time
 %--------------------------------------------------------------------------

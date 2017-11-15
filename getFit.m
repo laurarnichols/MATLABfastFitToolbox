@@ -87,7 +87,7 @@ while i <= numChunks
 end
 
 %--------------------------------------------------------------------------
-% If using basic fit or single GA, chunks need to be fit
+% If using basic fit or single GA, all chunks need to be fit
 % If using background GA, get a base fit for nonlinear
 % chunks
 % individually
@@ -179,7 +179,7 @@ if fitMethod == 3
     for i = 2:countLinear
         boundsLinear = [boundsLinear boundsM boundsB]; %#ok<AGROW>
     end
-    
+
 %--------------------------------------------------------------------------
     % Tell user you are about to start fitting process
     fprintf('\nStarting the fitting process. \n');
@@ -254,6 +254,3 @@ if fitMethod == 3
     error('Quitting for debugging.');
 end 
 end
-
-
-

@@ -1,4 +1,4 @@
-function [fitted, chiSquared, coefs] = fastFit(x, y, figNum, fitMethod, chunkCutMethod, linearCutMethod, loopNum) 
+function [fitted, chiSquared, coefs] = fastFit(x, y, figNum, fitMethod, chunkCutMethod, linearCutMethod, fitLinear, loopNum) 
 %==========================================================================
 % This function is the main interface for the rest of the 
 % functions. It takes user input to determine fitting 
@@ -43,6 +43,9 @@ function [fitted, chiSquared, coefs] = fastFit(x, y, figNum, fitMethod, chunkCut
 %                             1 = none
 %                             2 = manual
 %                             2 = GA
+%           fitLinear - will linear portions be fit
+%                           0 = no
+%                           1 = yes
 %           loopNum - how many times to try to fit if using
 %                     basic fitting method
 %
@@ -59,7 +62,7 @@ function [fitted, chiSquared, coefs] = fastFit(x, y, figNum, fitMethod, chunkCut
 
 if nargin < 5 || (chunkCutMethod ~= 1 && chunkCutMethod ~= 2)
     clc
-    if chunkCutMethod ~= 1 && chunkCutMethod ~= 2
+    if nargin >= 5
         fprintf(['\nYour initial input for chunk cut method' ...
         ' was not an\noption. \nPlease reselect.\n']);
     end
@@ -108,7 +111,7 @@ end
 
 if nargin < 4 || (fitMethod ~= 1 && fitMethod ~= 2 && fitMethod ~= 3)
    clc
-   if fitMethod ~= 1 && fitMethod ~= 2 && fitMethod ~= 3
+   if nargin >= 4
         fprintf(['\nYour initial input for fit method' ...
         ' was not an\noption. \nPlease reselect.\n']);
    end
@@ -136,7 +139,7 @@ end
 
 if nargin < 6 || (linearCutMethod ~= 1 && linearCutMethod ~= 2 && linearCutMethod ~= 3)
     clc
-    if linearCutMethod ~= 1 && linearCutMethod ~= 2 && linearCutMethod ~= 3
+    if nargin >= 6
         fprintf(['\nYour initial input for linear cut method' ...
         ' was not an\noption. \nPlease reselect.\n']);
     end
@@ -152,7 +155,26 @@ if nargin < 6 || (linearCutMethod ~= 1 && linearCutMethod ~= 2 && linearCutMetho
     linearCutMethod = getAndTestInput(request, check1, message1, check2, message2);
 end
 
-[coefs, chiSquared, allCutIndex, chunk, fitted] = getFit(x, y, smoothX, smoothY, turningIndices, turningIndicesSmooth, loopNum, fitMethod, linearCutMethod);
+if linearCutMethod ~= 1 && (nargin < 7 || (fitLinear ~= 0 && fitLinear ~= 1))
+    clc
+    if nargin >= 7
+        fprintf(['\nYour initial input for fitLinear' ...
+        ' was not an\noption. \nPlease reselect.\n']);
+    end
+   
+    request = ['\nWould you like to fit the linear\n portions?' ...
+                '\n\t 0) No' ...
+                '\n\t 1) Yes\n'];
+    check1 = 'length(temp) > 1';
+    message1 = 'Value entered had a length greater than 1.';
+    check2 = 'temp ~= 0 && temp ~= 1';
+    message2 = 'Value entered was not an option.';
+    linearCutMethod = getAndTestInput(request, check1, message1, check2, message2);
+elseif linearCutMethod == 1
+    fitLinear = 0;
+end
+
+[coefs, chiSquared, allCutIndex, chunk, fitted] = getFit(x, y, smoothX, smoothY, turningIndices, turningIndicesSmooth, loopNum, fitMethod, linearCutMethod, fitLinear);
 
 countFit = numStrExpChunks;
 numChunks = length(allCutIndex) - 1;

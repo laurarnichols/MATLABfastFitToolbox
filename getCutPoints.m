@@ -72,24 +72,29 @@ elseif linearCutMethod == 3
 end
 
 %--------------------------------------------------------------------------
-% Convert back to unsmoothed data
+% Convert to smoothed data
 
-indexXSmooth = zeros(length(cutIndex), length(smoothX));
+cutPoint(:,1) = x(cutIndex);
+cutPoint(:,2) = y(cutIndex);
+
+indexX = zeros(length(cutPoint), length(x));
+indexXSmooth = zeros(length(cutPoint), length(smoothX));
 
 % Find indices that have an x-value close to what you want
-for i = 1:length(cutIndex)
-    indexXSmooth(i,:) = abs(smoothX - turningPointSmooth(i,1)) < 1;
+for i = 1:length(cutPoint)
+    indexX(i,:) = abs(x - cutPoint(i,1)) < 1;
+    indexXSmooth(i,:) = abs(smoothX - cutPoint(i,1)) < x(end)/length(x)*75;
 end
-
 % Only choose one point for each index
-for i = 1:length(cutIndex)
-    foundSmooth = 0;
+for i = 1:length(cutPoint)
+    found = 0;
     for j = 1:length(indexXSmooth(i,:))
-        if indexXSmooth(i,j) && ~(foundSmooth)
+        if indexXSmooth(i,j) && ~(found)
             cutIndexSmooth(i) = j; %#ok<AGROW>
-            foundSmooth = 1;
+            found = 1;
         end
     end
 end
 end
+
 

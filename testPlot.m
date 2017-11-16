@@ -178,11 +178,11 @@ if fitInfo == 1
     cla reset
     h = plot(x, y, fitted1(:,1), fitted1(:,2));
     % Make the fitted line thicker
-    set(h(2),'linewidth',2)
+    set(h(2),'linewidth',2,'Color', [0.8392, 0.3333, 0.2314])
     hold
     
    if wasCut(1) && fitLinear ~= 0
-       plot(fittedLinear1(:,1), fittedLinear1(:,2),'r','linewidth',2)
+       plot(fittedLinear1(:,1), fittedLinear1(:,2),'Color' , [0.8392, 0.3333, 0.2314],'linewidth',2)
        countLinear = countLinear + 1;
        i = i + 1;
    elseif wasCut(1)
@@ -193,11 +193,11 @@ if fitInfo == 1
     countFit = countFit + 1;
     while i <= numChunks
         countFit = countFit + 1;
-        eval(sprintf('plot(fitted%d(:,1), fitted%d(:,2),''r'',''linewidth'',2)', countFit, countFit));
+        eval(sprintf('plot(fitted%d(:,1), fitted%d(:,2),''Color'', [0.8392, 0.3333, 0.2314],''linewidth'',2)', countFit, countFit));
         i = i + 1;
         if wasCut(countFit) && fitLinear ~= 0
             countLinear = countLinear + 1;
-            eval(sprintf('plot(fittedLinear%d(:,1), fittedLinear%d(:,2),''r'',''linewidth'',2)', countLinear, countLinear));
+            eval(sprintf('plot(fittedLinear%d(:,1), fittedLinear%d(:,2),''Color'', [0.8392, 0.3333, 0.2314],''linewidth'',2)', countLinear, countLinear));
             i = i + 1;
         elseif wasCut(countFit)
             i = i + 1;    

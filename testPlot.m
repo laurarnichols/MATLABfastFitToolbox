@@ -1,4 +1,4 @@
-function testPlot( fitInfo, x, y, allFit, wasCut, unshiftedChunks, fitChunks, coefs, fitMethod )  %#ok<INUSL>
+function testPlot( fitInfo, x, y, allFit, wasCut, unshiftedChunks, fitChunks, coefs, fitMethod, fitLinear )  %#ok<INUSL>
 %==========================================================================
 % This function takes the fit data and initial data to create a 
 % rough plot to see what's going on when testing.
@@ -61,6 +61,10 @@ if fitInfo == 1
             eval(sprintf('unshiftedLinearChunk%d = unshiftedChunks{:,i};', countLinear));
             i = i + 1;
         end
+    end
+    
+    if fitLinear == 0
+        countLinear = 0;
     end
     
 %-------------------------------------------------------------------------- 
@@ -166,41 +170,65 @@ if fitInfo == 1
         eval(sprintf('fittedLinear%d = [unshiftedLinearChunk%d(:,1) fitresultLinear1(linearChunk%d(:,1))];', i, i, i));
     end
 
-%--------------------------------------------------------------------------
-    % Put all together before returning
-
-    % Initialize loop variables
-    allFit = [];
-    numLin = 0;
-    count = 0;
-
-    % Put nonlinear and linear fits together
-    for i = 1:countFit
-        count = count + 1;
-        eval(sprintf('allFit = [allFit; fitted%d];', i));
-        if wasCut(i)
-            count = count + 1;
-            numLin = numLin + 1;
-            eval(sprintf('allFit = [allFit; fittedLinear%d];', numLin));
-        end       
+    i = 1;
+    countFit = 0;
+    countLinear = 0;
+    
+    figure(1)
+    cla reset
+    h = plot(x, y, fitted1(:,1), fitted1(:,2));
+    % Make the fitted line thicker
+    set(h(2),'linewidth',2)
+    hold
+    
+   if wasCut(1) && fitLinear ~= 0
+       plot(fittedLinear1(:,1), fittedLinear1(:,2),'r','linewidth',2)
+       countLinear = countLinear + 1;
+       i = i + 1;
+   elseif wasCut(1)
+       i = i+ 1;
+   end
+    
+    i = i + 1;
+    countFit = countFit + 1;
+    while i <= numChunks
+        countFit = countFit + 1;
+        eval(sprintf('plot(fitted%d(:,1), fitted%d(:,2),''r'',''linewidth'',2)', countFit, countFit));
+        i = i + 1;
+        if wasCut(countFit) && fitLinear ~= 0
+            countLinear = countLinear + 1;
+            eval(sprintf('plot(fittedLinear%d(:,1), fittedLinear%d(:,2),''r'',''linewidth'',2)', countLinear, countLinear));
+            i = i + 1;
+        elseif wasCut(countFit)
+            i = i + 1;    
+        end
     end
-elseif fitInfo ~= 2
+    % Set font size
+    ax = gca;
+    ax.FontSize = 16;         
+    % Create a legend
+    legend( h, 'Experimental Data', 'Stretched Exponential Fit', 'Location', 'NorthEast' );
+    % Label axes
+    xlabel('Time (s)')
+    ylabel('Transmittance (%)')
+    axis([0 2e4 16 23])
+elseif fitInfo == 2
+    figure(1)
+    cla reset
+    h = plot(x, y, allFit(:,1), allFit(:,2));
+    % Make the fitted line thicker
+    set(h(2),'linewidth',2)
+    % Set font size
+    ax = gca;
+    ax.FontSize = 16;         
+    % Create a legend
+    legend( h, 'Experimental Data', 'Stretched Exponential Fit', 'Location', 'NorthEast' );
+    % Label axes
+    xlabel('Time (s)')
+    ylabel('Transmittance (%)')
+    axis([0 2e4 16 23])
+else 
     error('Invalid option to testPlot.')
 end
-
-figure(1)
-cla reset
-h = plot(x, y, allFit(:,1), allFit(:,2));
-% Make the fitted line thicker
-set(h(2),'linewidth',2)
-% Set font size
-ax = gca;
-ax.FontSize = 16;         
-% Create a legend
-legend( h, 'Experimental Data', 'Stretched Exponential Fit', 'Location', 'NorthEast' );
-% Label axes
-xlabel('Time (s)')
-ylabel('Transmittance (%)')
-axis([0 2e4 16 23])
 end
 

@@ -1,4 +1,4 @@
-function [ sorted, time ] = rankFitBackground4( population, fitChunks, unshiftedChunks, allCutIndex, wasCut, lengthX ) 
+function [ sorted, time ] = rankFitBackground4( population, fitChunks, unshiftedChunks, allCutIndex, wasCut, fitLinear ) 
 %==========================================================================
 % This function will rank the different variable combinations
 % in the population based on the chi squared. It will
@@ -63,6 +63,10 @@ end
 
 if countFit ~= 4
     error(['You are in the specific ranking function for 4 chunks, but you have ' int2str(countFit) ' chunks.\n']);
+end
+
+if fitLinear == 0
+    countLinear = 0;
 end
 
 %--------------------------------------------------------------------------

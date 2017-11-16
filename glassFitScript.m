@@ -120,13 +120,14 @@ for i = 1:length(composition)
                 figNum =  n;
                 fitMethod = 3; % 1 = basic, 2 = single GA, 3 = background GA
                 chunkCutMethod = 2; % 1 = manual, 2 = auto
-                linearCutMethod = 1; % 1 = none, 2 = manual, 3 = GA
+                linearCutMethod = 2; % 1 = none, 2 = manual, 3 = GA
+                fitLinear = 0; % 0 = no, 1 = yes
                 loopNum = 100;
                 
                 % Send to glassFit()
                 eval(sprintf(['[fitted_%d%d, chiSquared%d%d, coefs%d%d] =' ...
                     'fastFit(x%d%d,y%d%d, figNum, fitMethod, chunkCutMethod,'...
-                    'linearCutMethod, loopNum);'], ...
+                    'linearCutMethod, fitLinear, loopNum);'], ...
                     i, combo, i, combo, i, combo, i, combo, ...
                     i, combo));
                 timesRun = timesRun + 1;

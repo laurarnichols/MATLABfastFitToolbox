@@ -1,4 +1,4 @@
-function [ coefs, chiSquared, allCutIndex, unshiftedChunks, fitted ] = getFit( x, y, smoothX, smoothY, turningIndices, turningIndicesSmooth, loopNum, fitMethod, linearCutMethod ) %#ok<INUSL>
+function [ coefs, chiSquared, allCutIndex, unshiftedChunks, fitted ] = getFit( x, y, smoothX, smoothY, turningIndices, turningIndicesSmooth, loopNum, fitMethod, linearCutMethod, fitLinear ) %#ok<INUSL>
 %==========================================================================
 % This function takes the input data and fitting options, 
 % splits the chunks, then calls the desired fitting function.
@@ -86,6 +86,10 @@ while i <= numChunks
     end
 end
 
+if fitLinear == 0
+    countLinear = 0;
+end
+
 %--------------------------------------------------------------------------
 % If using basic fit or single GA, all chunks need to be fit
 % If using background GA, get a base fit for nonlinear
@@ -146,7 +150,9 @@ if fitMethod == 1 || fitMethod == 2 || fitMethod ==3
         end
 
         % Update user on progress
-        fprintf('All linear portions are fit.')
+        if fitLinear == 1 && linearCutMethod ~= 1
+            fprintf('All linear portions are fit.')
+        end
     end
 end
 
@@ -188,7 +194,7 @@ if fitMethod == 3
     % Put bounds together and send to GAFitBackground
     bounds = [boundsNonLin boundsLinear];
     tic;
-    [chiSquared, fitresult, chiSquaredLinear, fitresultLinear] = GAFitBackground(smoothX, smoothY, coefs, bounds, fitChunksSmooth, allCutIndexSmooth, wasCut, unshiftedChunksSmooth);
+    [chiSquared, fitresult, chiSquaredLinear, fitresultLinear] = GAFitBackground(smoothX, smoothY, coefs, bounds, fitChunksSmooth, allCutIndexSmooth, wasCut, unshiftedChunksSmooth, fitLinear);
     toc
 %-------------------------------------------------------------------------- 
     % Put all of the fit results in arrays
@@ -220,7 +226,7 @@ for i = 1:numStrExpChunks
     count = count + 1;
     eval(sprintf('allFit = [allFit; fitted%d];', i));
     eval(sprintf('fitted{1,count} = fitted%d;', i));
-    if wasCut(i)
+    if wasCut(i) && fitLinear ~= 0
         count = count + 1;
         numLin = numLin + 1;
         eval(sprintf('allFit = [allFit; fittedLinear%d];', numLin));

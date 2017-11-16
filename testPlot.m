@@ -170,6 +170,44 @@ if fitInfo == 1
         eval(sprintf('fittedLinear%d = [unshiftedLinearChunk%d(:,1) fitresultLinear1(linearChunk%d(:,1))];', i, i, i));
     end
 
+    i = 1;
+    countFit = 0;
+    countLinear = 0;
+    
+    figure(1)
+    cla reset
+    h = plot(x, y, fitted1(:,1), fitted1(:,2));
+    % Make the fitted line thicker
+    set(h(2),'linewidth',2)
+    hold
+    
+   if wasCut(1) && fitLinear ~= 0
+        plot(fittedLinear1(:,1), fittedLinear1(:,2),'r','linewidth',2)
+        countLinear = countLinear + 1;
+    end
+    
+    
+    countFit = countFit + 1;
+    while i <= numChunks
+        countFit = countFit + 1;
+        eval(sprintf('plot(fitted%d(:,1), fitted%d(:,2),''r'',''linewidth'',2)', countFit));
+        i = i + 1;
+        if wasCut(countFit) && fitLinear ~= 0
+            countLinear = countLinear + 1;
+            eval(sprintf('plot(fittedLinear%d(:,1), fittedLinear%d(:,2),''r'',''linewidth'',2)', countFit));
+            i = i + 1;
+        end
+    end
+    % Set font size
+    ax = gca;
+    ax.FontSize = 16;         
+    % Create a legend
+    legend( h, 'Experimental Data', 'Stretched Exponential Fit', 'Location', 'NorthEast' );
+    % Label axes
+    xlabel('Time (s)')
+    ylabel('Transmittance (%)')
+    axis([0 2e4 16 23])
+    
 %--------------------------------------------------------------------------
     % Put all together before returning
 
@@ -188,7 +226,22 @@ if fitInfo == 1
             eval(sprintf('allFit = [allFit; fittedLinear%d];', numLin));
         end       
     end
-elseif fitInfo ~= 2
+elseif fitInfo == 2
+    figure(1)
+    cla reset
+    h = plot(x, y, allFit(:,1), allFit(:,2));
+    % Make the fitted line thicker
+    set(h(2),'linewidth',2)
+    % Set font size
+    ax = gca;
+    ax.FontSize = 16;         
+    % Create a legend
+    legend( h, 'Experimental Data', 'Stretched Exponential Fit', 'Location', 'NorthEast' );
+    % Label axes
+    xlabel('Time (s)')
+    ylabel('Transmittance (%)')
+    axis([0 2e4 16 23])
+else 
     error('Invalid option to testPlot.')
 end
 

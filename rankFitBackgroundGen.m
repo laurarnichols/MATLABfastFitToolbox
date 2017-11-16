@@ -1,4 +1,4 @@
-function [ sorted ] = rankFitBackgroundGen( population, fitChunks, allCutIndex, wasCut, unshiftedChunks )
+function [ sorted ] = rankFitBackgroundGen( population, fitChunks, allCutIndex, wasCut, unshiftedChunks, fitLinear )
 %==========================================================================
 % This function will rank the different variable combinations
 % in the population based on the chi squared. It will
@@ -53,6 +53,10 @@ while i <= numChunks
         eval(sprintf('unshiftedLinearChunk%d = unshiftedChunks{:,i};', countLinear));
         i = i + 1;
     end
+end
+
+if fitLinear == 0
+    countLinear = 0;
 end
 
 %--------------------------------------------------------------------------

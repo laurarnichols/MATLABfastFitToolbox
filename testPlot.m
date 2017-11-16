@@ -1,4 +1,4 @@
-function testPlot( fitInfo, x, y, allFit, wasCut, unshiftedChunks, fitChunks, coefs, fitMethod )  %#ok<INUSL>
+function testPlot( fitInfo, x, y, allFit, wasCut, unshiftedChunks, fitChunks, coefs, fitMethod, fitLinear )  %#ok<INUSL>
 %==========================================================================
 % This function takes the fit data and initial data to create a 
 % rough plot to see what's going on when testing.
@@ -61,6 +61,10 @@ if fitInfo == 1
             eval(sprintf('unshiftedLinearChunk%d = unshiftedChunks{:,i};', countLinear));
             i = i + 1;
         end
+    end
+    
+    if fitLinear == 0
+        countLinear = 0;
     end
     
 %-------------------------------------------------------------------------- 
@@ -178,7 +182,7 @@ if fitInfo == 1
     for i = 1:countFit
         count = count + 1;
         eval(sprintf('allFit = [allFit; fitted%d];', i));
-        if wasCut(i)
+        if wasCut(i) && fitLinear ~= 0
             count = count + 1;
             numLin = numLin + 1;
             eval(sprintf('allFit = [allFit; fittedLinear%d];', numLin));

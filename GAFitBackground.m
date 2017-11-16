@@ -1,4 +1,4 @@
-function [ chiSquared, fitresult, chiSquaredLinear, fitresultLinear ] = GAFitBackground( x, y, coefs, bounds, fitChunks, allCutIndex, wasCut, unshiftedChunks )
+function [ chiSquared, fitresult, chiSquaredLinear, fitresultLinear ] = GAFitBackground( x, y, coefs, bounds, fitChunks, allCutIndex, wasCut, unshiftedChunks, fitLinear )
 %==========================================================================
 % This function will try to fit the given chunk to a stretched
 % exponential curve using the given boundaries for points 
@@ -93,6 +93,10 @@ while i <= numChunks
     end
 end
 
+if fitLinear == 0
+    countLinear = 0;
+end
+
 %--------------------------------------------------------------------------
 % Set this value to 1 if you want to look at the 
 % background
@@ -107,7 +111,7 @@ if numBounds ~= 2, error('Bounds must be a matrix with 2 rows'); end
 numChunks = length(allCutIndex) - 1;
 numStrExpChunks = numChunks - sum(wasCut);
 
-testPlot(1, x, y, 0, wasCut, unshiftedChunks, fitChunks, coefs, 1)
+testPlot(1, x, y, 0, wasCut, unshiftedChunks, fitChunks, coefs, 1, fitLinear)
 
 diff = 0.1*coefs;
 chunkBounds = [coefs-diff; coefs+diff];
@@ -115,7 +119,7 @@ chunkBounds = [coefs-diff; coefs+diff];
 newBounds = [bounds(:,1:4) chunkBounds bounds(:,5:end)];
 bounds = newBounds;
 
-% Adjust bounds if needed
+% Adjust bounds if needed to keep them from flipping
 for i = 1:numStrExpChunks
     if coefs(4*(i-1)+2) < 0
         bounds(2,4*(i-1)+6) = 0;
@@ -137,7 +141,7 @@ population = generatePop(bounds, nInds);
 numGens = 3000;
 
 % Set up a paralllel pool if you will use it (4 chunks)
-if numChunks == 4
+if numStrExpChunks == 4
     p = gcp('nocreate'); 
     
     % Create new pool only if one is not currently running
@@ -172,17 +176,17 @@ for gen = 1:numGens
     end
     
     % Rank the population based on chi squared for 
-    if numChunks == 4
+    if numStrExpChunks == 4
         % 4 chunks
         [population, newTime] = rankFitBackground4(population, ...
                         fitChunks, unshiftedChunks, ...
-                        allCutIndex, wasCut);
+                        allCutIndex, wasCut, fitLinear);
         time = time + newTime;
     else
         % Arbitrary number of chunks
         population = rankFitBackgroundGen(population, ...
                         fitChunks, allCutIndex, wasCut, ...
-                        unshiftedChunks);
+                        unshiftedChunks, fitLinear);
     end
         
     % Select parents and breed
@@ -204,32 +208,6 @@ end
 delete(h)
 display('Final solution found.')
 time
-%--------------------------------------------------------------------------
-% Seperate chunks from cell arrays into different
-% variables
-
-% Set loop variables
-countFit = 0;
-countLinear = 0;
-i = 1;
-
-% Get separated chunks into different variables
-while i <= numChunks
-    % Nonlinear
-    countFit = countFit + 1;
-    eval(sprintf('fitChunk%d = fitChunks{:,i};', countFit));
-    eval(sprintf('startHeight(countFit) = fitChunk%d(1,2);', countFit));
-    eval(sprintf('unshiftedChunk%d = unshiftedChunks{:,i};', countFit));
-    i = i + 1;
-    
-    % Linear
-    if wasCut(countFit)
-        countLinear = countLinear + 1;
-        eval(sprintf('linearChunk%d = fitChunks{:,i};', countLinear));
-        eval(sprintf('unshiftedLinearChunk%d = unshiftedChunks{:,i};', countLinear));
-        i = i + 1;
-    end
-end
 
 %--------------------------------------------------------------------------
 % Get fit functions to return

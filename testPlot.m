@@ -212,12 +212,39 @@ if fitInfo == 1
     xlabel('Time (s)')
     ylabel('Transmittance (%)')
     axis([0 2e4 16 23])
+    
 elseif fitInfo == 2
     figure(1)
     cla reset
     h = plot(x, y, allFit(:,1), allFit(:,2));
     % Make the fitted line thicker
     set(h(2),'linewidth',2)
+    % Set font size
+    ax = gca;
+    ax.FontSize = 16;         
+    % Create a legend
+    legend( h, 'Experimental Data', 'Stretched Exponential Fit', 'Location', 'NorthEast' );
+    % Label axes
+    xlabel('Time (s)')
+    ylabel('Transmittance (%)')
+    axis([0 2e4 16 23])
+elseif fitInfo == 3
+    count = wasCut;
+    
+    for i = 1:count
+        eval(sprintf('fitted%d = allFit{:,i};', i));
+    end
+    
+    figure(1)
+    cla reset
+    h = plot(x, y, fitted1(:,1), fitted1(:,2));
+    % Make the fitted line thicker
+    set(h(2),'linewidth',2,'Color', [0.8392, 0.3333, 0.2314])
+    hold
+    
+    for i = 2:count
+        eval(sprintf('plot(fitted%d(:,1), fitted%d(:,2),''Color'', [0.8392, 0.3333, 0.2314],''linewidth'',2)', i, i));
+    end
     % Set font size
     ax = gca;
     ax.FontSize = 16;         

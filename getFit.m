@@ -254,7 +254,7 @@ end
 
 %--------------------------------------------------------------------------
 % Plot and quit for debugging
-testPlot(2, x, y, allFit)
+testPlot(3, x, y, fitted, count)
 
 if fitMethod == 3
     error('Quitting for debugging.');

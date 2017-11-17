@@ -20,7 +20,6 @@ function [ fitChunks, fitChunksSmooth, allCutIndex, allCutIndexSmooth, wasCut, u
 %           linearCutMethod - how to cut linear parts
 %                             1 = none
 %                             2 = manual
-%                             2 = GA
 %
 % Output data:
 %           fitChunks - cell array of fit chunks

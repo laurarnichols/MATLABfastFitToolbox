@@ -21,7 +21,6 @@ function [ cutIndex, cutIndexSmooth ] = getCutPoints(x, y, smoothX, numChunks, l
 %           linearCutMethod - how to cut linear parts
 %                             1 = none
 %                             2 = manual
-%                             2 = GA
 %           turningIndex - array holding indices of turning
 %                            points
 %
@@ -56,19 +55,6 @@ if linearCutMethod == 2
 
     % Send to manualMode to select points
     [cutIndex, ~] = manualMode(x, y, countCut, 1);
-    
-%--------------------------------------------------------------------------
-% If you want to cut with a GA
-elseif linearCutMethod == 3    
-    % Send each chunk to GA individually
-    for i = 1:numChunks
-        % Separate chunks
-        cutX = x(turningIndex(i):turningIndex(i+1));
-        cutY = y(turningIndex(i):turningIndex(i+1));
-        
-        % Send to GA
-        cutIndex = [cutIndex (cutGA(cutX, cutY)+turningIndex(i))]; %#ok<AGROW>
-    end
 end
 
 %--------------------------------------------------------------------------

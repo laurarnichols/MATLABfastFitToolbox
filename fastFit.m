@@ -42,7 +42,6 @@ function [fitted, chiSquared, coefs] = fastFit(x, y, figNum, fitMethod, chunkCut
 %           linearCutMethod - how to cut linear parts
 %                             1 = none
 %                             2 = manual
-%                             2 = GA
 %           fitLinear - will linear portions be fit
 %                           0 = no
 %                           1 = yes
@@ -137,7 +136,7 @@ if fitMethod == 1 && nargin < 7
     loopNum = getAndTestInput(request, check1, message1, check2, message2);
 end
 
-if nargin < 6 || (linearCutMethod ~= 1 && linearCutMethod ~= 2 && linearCutMethod ~= 3)
+if nargin < 6 || (linearCutMethod ~= 1 && linearCutMethod ~= 2)
     clc
     if nargin >= 6
         fprintf(['\nYour initial input for linear cut method' ...
@@ -146,11 +145,10 @@ if nargin < 6 || (linearCutMethod ~= 1 && linearCutMethod ~= 2 && linearCutMetho
    
     request = ['\nWhat method would you like to use\n to cut the linear portion?' ...
                 '\n\t 1) No cut' ...
-                '\n\t 2) Manually cut' ...
-                '\n\t 3) GA cut\n'];
+                '\n\t 2) Manually cut\n'];
     check1 = 'length(temp) > 1';
     message1 = 'Value entered had a length greater than 1.';
-    check2 = 'temp ~= 1 && temp ~= 2 && temp ~= 3';
+    check2 = 'temp ~= 1 && temp ~= 2';
     message2 = 'Value entered was not an option.';
     linearCutMethod = getAndTestInput(request, check1, message1, check2, message2);
 end

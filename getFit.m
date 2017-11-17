@@ -31,7 +31,7 @@ function [ coefs, chiSquared, allCutIndex, unshiftedChunks, fitted ] = getFit( x
 %                           3 = background GA
 %           chunkCutMethod - choice of how to separate cycles
 %                           1 = manual
-%                           2 = GAlinearCutMethod
+%                           2 = GA
 %           loopNum - how many times to try to fit if using
 %                     basic fitting method
 %

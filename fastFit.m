@@ -1,4 +1,4 @@
-function [fitted, chiSquared, coefs] = fastFit(x, y, figNum, fitMethod, chunkCutMethod, linearCutMethod, fitLinear, loopNum) 
+function [fitted, chiSquared, coefs] = fastFit(x, y, figNum, useDefaults, fitMethod, chunkCutMethod, linearCutMethod, fitLinear, loopNum) 
 %==========================================================================
 % This function is the main interface for the rest of the 
 % functions. It takes user input to determine fitting 
@@ -38,7 +38,7 @@ function [fitted, chiSquared, coefs] = fastFit(x, y, figNum, fitMethod, chunkCut
 %                           3 = background GA
 %           chunkCutMethod - how to cut cycles
 %                            1 = manual
-%                            2 = GA
+%                            2 = automated
 %           linearCutMethod - how to cut linear parts
 %                             1 = none
 %                             2 = manual
@@ -58,8 +58,38 @@ function [fitted, chiSquared, coefs] = fastFit(x, y, figNum, fitMethod, chunkCut
 % Creation date: 8 March 2017
 % Contact: lnichols11@my.apsu.edu
 %==========================================================================
+letGetLinear = 1;
 
-if nargin < 5 || (chunkCutMethod ~= 1 && chunkCutMethod ~= 2)
+if nargin < 4 || (useDefaults ~= 0 && useDefaults ~= 1)
+    clc
+    if nargin >= 5
+        fprintf(['\nYour initial input for using the defaults' ...
+        ' was not an\noption. \nPlease reselect.\n']);
+    end
+    
+    request = ['\nWould you like to use the default options?' ...
+                '\n\t 0) No' ...
+                '\n\t 1) Yes\n'];
+    check1 = 'length(temp) > 1';
+    message1 = 'Value entered had a length greater than 1.';
+    check2 = 'temp ~= 0 && temp ~= 1';
+    message2 = 'Value entered was not an option.';
+    useDefaults = getAndTestInput(request, check1, message1, check2, message2);
+end
+
+if useDefaults
+    if letGetLinear
+        fitMethod = 1;
+    else 
+        fitMethod = 3;
+    end
+    
+    chunkCutMethod = 2;
+    linearCutMethod = 1;
+    loopNum = 100;
+end
+
+if useDefaults == 0 && (nargin < 6 || (chunkCutMethod ~= 1 && chunkCutMethod ~= 2))
     clc
     if nargin >= 5
         fprintf(['\nYour initial input for chunk cut method' ...
@@ -108,7 +138,7 @@ end
 %--------------------------------------------------------------------------
 % Get chunks shifted to zero and fit
 
-if nargin < 4 || (fitMethod ~= 1 && fitMethod ~= 2 && fitMethod ~= 3)
+if useDefaults == 0 && (nargin < 5 || (fitMethod ~= 1 && fitMethod ~= 2 && fitMethod ~= 3))
    clc
    if nargin >= 4
         fprintf(['\nYour initial input for fit method' ...
@@ -126,7 +156,7 @@ if nargin < 4 || (fitMethod ~= 1 && fitMethod ~= 2 && fitMethod ~= 3)
     fitMethod = getAndTestInput(request, check1, message1, check2, message2);
 end
 
-if fitMethod == 1 && nargin < 7
+if useDefaults == 0 && fitMethod == 1 && nargin < 9
     clc
     request = '\nWhat is the maximum number of times to try to fit?\n';
     check1 = 'length(temp) > 1';
@@ -136,7 +166,7 @@ if fitMethod == 1 && nargin < 7
     loopNum = getAndTestInput(request, check1, message1, check2, message2);
 end
 
-if nargin < 6 || (linearCutMethod ~= 1 && linearCutMethod ~= 2)
+if useDefaults == 0 && (nargin < 7 || (linearCutMethod ~= 1 && linearCutMethod ~= 2))
     clc
     if nargin >= 6
         fprintf(['\nYour initial input for linear cut method' ...
@@ -153,7 +183,7 @@ if nargin < 6 || (linearCutMethod ~= 1 && linearCutMethod ~= 2)
     linearCutMethod = getAndTestInput(request, check1, message1, check2, message2);
 end
 
-if linearCutMethod ~= 1 && (nargin < 7 || (fitLinear ~= 0 && fitLinear ~= 1))
+if useDefaults == 0 && linearCutMethod ~= 1 && (nargin < 8 || (fitLinear ~= 0 && fitLinear ~= 1))
     clc
     if nargin >= 7
         fprintf(['\nYour initial input for fitLinear' ...

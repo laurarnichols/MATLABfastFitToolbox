@@ -211,7 +211,7 @@ if fitInfo == 1
     % Label axes
     xlabel('Time (s)')
     ylabel('Transmittance (%)')
-    axis([0 2e4 16 23])
+    %axis([0 2e4 16 23])
     
 elseif fitInfo == 2
     figure(1)
@@ -227,8 +227,9 @@ elseif fitInfo == 2
     % Label axes
     xlabel('Time (s)')
     ylabel('Transmittance (%)')
-    axis([0 2e4 16 23])
+    %axis([0 2e4 16 23])
 elseif fitInfo == 3
+    % Switch variable names for clarity
     count = wasCut;
     
     for i = 1:count
@@ -253,7 +254,57 @@ elseif fitInfo == 3
     % Label axes
     xlabel('Time (s)')
     ylabel('Transmittance (%)')
-    axis([0 2e4 16 23])
+    %axis([0 2e4 16 23])
+elseif fitInfo == 4
+    % Switch variable names for clarity
+    count = wasCut;
+    backgroundCoefs = unshiftedChunks;
+    
+    a1B = backgroundCoefs(1);
+    a2B = backgroundCoefs(2);
+    betaB = backgroundCoefs(3);
+    tauB = backgroundCoefs(4);
+    
+    backgroundY = a1B - a2B*exp(-(x/tauB).^betaB);
+    figure(2)
+    plot(x,backgroundY)
+    
+    for i = 1:count
+        eval(sprintf('fitted%d = allFit{:,i};', i));
+    end
+    
+    figure(1)
+    cla reset
+    h = plot(x, y, fitted1(:,1), fitted1(:,2));
+    % Make the fitted line thicker
+    set(h(2),'linewidth',2,'Color', [0.8392, 0.3333, 0.2314])
+    hold
+    
+    for i = 2:count
+        eval(sprintf('plot(fitted%d(:,1), fitted%d(:,2),''Color'', [0.8392, 0.3333, 0.2314],''linewidth'',2)', i, i));
+    end
+    % Set font size
+    ax = gca;
+    ax.FontSize = 16;         
+    % Create a legend
+    legend( h, 'Experimental Data', 'Stretched Exponential Fit', 'Location', 'NorthEast' );
+    % Label axes
+    xlabel('Time (s)')
+    ylabel('Transmittance (%)')
+    %axis([0 2e4 16 23])
+    
+    figure(2)
+    h = plot(x,backgroundY);
+    set(h(2),'linewidth',2,'Color', [0.5686, 0.5882, 0.6196])
+    % Set font size
+    ax = gca;
+    ax.FontSize = 16;         
+    % Create a legend
+    legend( h, 'Background Fit', 'Location', 'NorthEast' );
+    % Label axes
+    xlabel('Time (s)')
+    ylabel('Transmittance (%)')
+    
 else 
     error('Invalid option to testPlot.')
 end

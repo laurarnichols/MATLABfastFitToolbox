@@ -194,7 +194,7 @@ if fitMethod == 3
     % Put bounds together and send to GAFitBackground
     bounds = [boundsNonLin boundsLinear];
     tic;
-    [chiSquared, fitresult, chiSquaredLinear, fitresultLinear] = GAFitBackground(smoothX, smoothY, coefs, bounds, fitChunksSmooth, allCutIndexSmooth, wasCut, unshiftedChunksSmooth, fitLinear);
+    [chiSquared, fitresult, chiSquaredLinear, fitresultLinear, backgroundCoefs] = GAFitBackground(smoothX, smoothY, coefs, bounds, fitChunksSmooth, allCutIndexSmooth, wasCut, unshiftedChunksSmooth, fitLinear);
     toc
 %-------------------------------------------------------------------------- 
     % Put all of the fit results in arrays
@@ -254,7 +254,7 @@ end
 
 %--------------------------------------------------------------------------
 % Plot and quit for debugging
-testPlot(3, x, y, fitted, count)
+testPlot(4, x, y, fitted, count, backgroundCoefs)
 
 if fitMethod == 3
     error('Quitting for debugging.');

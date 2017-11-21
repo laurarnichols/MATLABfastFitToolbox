@@ -1,4 +1,4 @@
-function [ chiSquared, fitresult, chiSquaredLinear, fitresultLinear ] = GAFitBackground( x, y, coefs, bounds, fitChunks, allCutIndex, wasCut, unshiftedChunks, fitLinear )
+function [ chiSquared, fitresult, chiSquaredLinear, fitresultLinear, backgroundCoefs ] = GAFitBackground( x, y, coefs, bounds, fitChunks, allCutIndex, wasCut, unshiftedChunks, fitLinear )
 %==========================================================================
 % This function will try to fit the given chunk to a stretched
 % exponential curve using the given boundaries for points 
@@ -228,6 +228,8 @@ a1B = solution(1);
 a2B = solution(2);
 betaB = solution(3);
 tauB = solution(4);
+
+backgroundCoefs = [a1B a2B betaB tauB];
 
 % If you want to look at what the background function 
 % looks like

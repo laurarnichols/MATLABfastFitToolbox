@@ -254,7 +254,11 @@ end
 
 %--------------------------------------------------------------------------
 % Plot and quit for debugging
-testPlot(4, x, y, fitted, count, backgroundCoefs)
+if(fitMethod == 3) 
+    testPlot(4, x, y, fitted, count, backgroundCoefs);
+else
+    testPlot(3, x, y, fitted, count);
+end
 
 if fitMethod == 3
     error('Quitting for debugging.');

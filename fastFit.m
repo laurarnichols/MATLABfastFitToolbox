@@ -37,8 +37,9 @@ function [fitted, chiSquared, coefs] = fastFit(x, y, figNum, useDefaults, fitMet
 %                           2 = single GA
 %                           3 = background GA
 %           chunkCutMethod - how to cut cycles
-%                            1 = manual
+%                            1 = manual separate
 %                            2 = automated
+%                            3 = manual all together
 %           linearCutMethod - how to cut linear parts
 %                             1 = none
 %                             2 = manual
@@ -102,7 +103,7 @@ if useDefaults
     loopNum = 100;
 end
 
-if useDefaults == 0 && (nargin < 6 || (chunkCutMethod ~= 1 && chunkCutMethod ~= 2))
+if useDefaults == 0 && (nargin < 6 || (chunkCutMethod ~= 1 && chunkCutMethod ~= 2 && chunkCutMethod ~= 3))
     clc
     if nargin >= 5
         fprintf(['\nYour initial input for chunk cut method' ...
@@ -110,8 +111,9 @@ if useDefaults == 0 && (nargin < 6 || (chunkCutMethod ~= 1 && chunkCutMethod ~= 
     end
     
     request = ['\nWhat method would you like to use\n to cut the chunks?' ...
-                '\n\t 1) Manual' ...
-                '\n\t 2) Automated\n'];
+                '\n\t 1) Manual separate' ...
+                '\n\t 2) Automated' ...
+                '\n\t 3) Manual All Together\n'];
     check1 = 'length(temp) > 1';
     message1 = 'Value entered had a length greater than 1.';
     check2 = 'temp ~= 1 && temp ~= 2';
@@ -121,7 +123,14 @@ end
 
 % Get turning points for graph
 [turningPoints, turningIndices, turningPointsSmooth, turningIndicesSmooth, smoothX, smoothY] = getTurningPoints(x, y, chunkCutMethod);
-numStrExpChunks = length(turningIndices) - 1;
+
+if chunkCutMethod == 3
+    linearCutMethod = 1;
+    fitLinear = 0;
+    numStrExpChunks = length(turningIndices)/2;
+else
+    numStrExpChunks = length(turningIndices) - 1;
+end
 
 %--------------------------------------------------------------------------
 % Plot turning points on noisy data

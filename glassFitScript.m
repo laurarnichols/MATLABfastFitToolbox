@@ -118,12 +118,12 @@ for i = 1:length(composition)
             if numSkipped == skip
                 % Set preferences for fitting
                 figNum =  n;
-                fitMethod = 3; % 1 = basic, 2 = single GA, 3 = background GA
+                fitMethod = 1; % 1 = basic, 2 = single GA, 3 = background GA
                 chunkCutMethod = 2; % 1 = manual, 2 = auto
                 linearCutMethod = 2; % 1 = none, 2 = manual
                 fitLinear = 0; % 0 = no, 1 = yes
                 loopNum = 100;
-                useDefaults = 1; % 0 = no, 1 = yes
+                useDefaults = 0; % 0 = no, 1 = yes
                 
                 % Send to glassFit()
                 eval(sprintf(['[fitted_%d%d, chiSquared%d%d, coefs%d%d] =' ...

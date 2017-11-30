@@ -119,7 +119,7 @@ for i = 1:length(composition)
                 % Set preferences for fitting
                 figNum =  n;
                 fitMethod = 1; % 1 = basic, 2 = single GA, 3 = background GA
-                chunkCutMethod = 2; % 1 = manual, 2 = auto
+                chunkCutMethod = 2; % 1 = manual separate, 2 = auto, 3 = manual all together
                 linearCutMethod = 2; % 1 = none, 2 = manual
                 fitLinear = 0; % 0 = no, 1 = yes
                 loopNum = 100;

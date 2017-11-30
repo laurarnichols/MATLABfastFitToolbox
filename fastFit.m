@@ -59,6 +59,7 @@ function [fitted, chiSquared, coefs] = fastFit(x, y, figNum, useDefaults, fitMet
 % Contact: lnichols11@my.apsu.edu
 %==========================================================================
 letGetLinear = 1;
+choseDefault = 0;
 
 if nargin < 4 || (useDefaults ~= 0 && useDefaults ~= 1)
     clc
@@ -75,9 +76,21 @@ if nargin < 4 || (useDefaults ~= 0 && useDefaults ~= 1)
     check2 = 'temp ~= 0 && temp ~= 1';
     message2 = 'Value entered was not an option.';
     useDefaults = getAndTestInput(request, check1, message1, check2, message2);
+    choseDefault = useDefaults;
 end
 
-if useDefaults
+if useDefaults && ~choseDefault
+    request = ['\nThe default inputs are being used. Is this correct?' ...
+                '\n\t 0) No' ...
+                '\n\t 1) Yes\n'];
+    check1 = 'length(temp) > 1';
+    message1 = 'Value entered had a length greater than 1.';
+    check2 = 'temp ~= 0 && temp ~= 1';
+    message2 = 'Value entered was not an option.';
+    useDefaults = getAndTestInput(request, check1, message1, check2, message2);
+end
+
+if useDefaults    
     if letGetLinear
         fitMethod = 1;
     else 
@@ -207,6 +220,10 @@ end
 countFit = numStrExpChunks;
 numChunks = length(allCutIndex) - 1;
 countLinear = numChunks - numStrExpChunks;
+
+if ~fitLinear
+    numChunks = numStrExpChunks;
+end
 %--------------------------------------------------------------------------
 % Manual fitting if needed
 % General form is: coefs# = [a1 a2 beta tau];
@@ -298,26 +315,27 @@ ylabel('Transmittance (%)')
 
 %--------------------------------------------------------------------------
     % Get coefficients for linear chunks
+    if fitLinear 
+        % Preallocate for speed
+        m = zeros(1,countLinear);
+        b = zeros(1,countLinear);
 
-    % Preallocate for speed
-    m = zeros(1,countLinear);
-    b = zeros(1,countLinear);
+        % Set loop variables
+        count = 0;
+        if fitMethod == 3
+            start = 4*(countFit+1) + 1;
+            finish = 4*(countFit+1) + 2*countLinear;
+        else
+            start = 4*countFit + 1;
+            finish = 4*countFit + 2*countLinear;
+        end
 
-    % Set loop variables
-    count = 0;
-    if fitMethod == 3
-        start = 4*(countFit+1) + 1;
-        finish = 4*(countFit+1) + 2*countLinear;
-    else
-        start = 4*countFit + 1;
-        finish = 4*countFit + 2*countLinear;
-    end
-
-    % Populate linear coefficients
-    for i = start:2:finish
-        count = count + 1;
-        m(count) = coefs(i);
-        b(count) = coefs(i+1);
+        % Populate linear coefficients
+        for i = start:2:finish
+            count = count + 1;
+            m(count) = coefs(i);
+            b(count) = coefs(i+1);
+        end
     end
 %--------------------------------------------------------------------------
 % Get a prettier final plot with table including fit parameters

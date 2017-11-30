@@ -63,14 +63,14 @@ plot(smoothX, smoothY)
 
 clc
 fprintf('\nThe figure displayed shows the smoothed data.\n\n');
-fprintf('Please enter a single positive integer\ngiving the number of turning points,\ncounting the ends.\n\n');
+fprintf('Please enter a single positive integer\ngiving the number of cycles,\n(separate chunks).\n\n');
 
 request = 'Please enter a single positive integer.\n';
 check1 = 'length(temp) > 1';
 message1 = 'Value entered had a length greater than 1.';
 check2 = 'floor(temp) < 1';
 message2 = 'Value entered was less than or equal to 0.';
-numTurningPoints = floor(getAndTestInput(request, check1, message1, check2, message2));
+numTurningPoints = floor(getAndTestInput(request, check1, message1, check2, message2)) + 1;
 
 %--------------------------------------------------------------------------
 if chunkCutMethod == 1

@@ -1,4 +1,4 @@
-function [turningIndex, turningPoint] = manualMode(x, y, numTurningPoints, selectOnly, turningIndex, turningPoint)
+function [turningIndex, turningPoint] = manualMode(x, y, numTurningPoints, selectMode, turningIndex, turningPoint)
 %==========================================================================
 % This function allows the user to manually shift the turning
 % points. It will ask which one they want to shift, allow them 
@@ -42,7 +42,7 @@ function [turningIndex, turningPoint] = manualMode(x, y, numTurningPoints, selec
 % If called to select points for linear cutting, then there
 % will be no original turning points. But they should be 
 % there otherwise.
-if ~selectOnly && nargin < 6
+if selectOnly == 0 && nargin < 6
     error('Not enough input arguments to manualMode.');
 end
 
@@ -57,7 +57,7 @@ while ~(exit)
 %--------------------------------------------------------------------------
     % Ask user if want to shift current points or just select
     % new ones
-    if shiftOrSelect == 2 && ~selectOnly
+    if shiftOrSelect == 2 && selectOnly == 0
         clc
         request = ['\nWould you like to shift or reselect points?' ...
                                 '\n\t 1) Shift' ...
@@ -75,7 +75,7 @@ while ~(exit)
         if changePoint    
             % Ask them which one they want to edit
             clc
-            display(sprintf('\nWhich point would you like to shift?\n'));
+            fprintf('\nWhich point would you like to shift?\n');
             request = 'Please enter a single positive integer greater than 0.\n';
             check1 = sprintf('temp > %d', numTurningPoints);
             message1 = sprintf('You only said there were %d points.', numTurningPoints);
@@ -91,7 +91,7 @@ while ~(exit)
         % Ask the user how much they want to shift the current point
         % and give an error if the shift would put them off the graph
         clc
-        display(sprintf('\nBy how many points would you like to shift?'));
+        fprintf('\nBy how many points would you like to shift?');
         request = '\nPlease enter a single integer.\n';
         check1 = sprintf('temp < 0 && abs(temp) > %d', turningIndex(point));
         message1 = 'This shift would put you off of the graph.';
@@ -152,6 +152,14 @@ while ~(exit)
 %--------------------------------------------------------------------------
     % If the user wants to select new points
     else
+        if selectMode == 2
+            numTurningPoints = numTurningPoints*2;
+        end
+        
+        clc
+        fprintf('Please use the crosshairs on the graph to \n select %d points.', numTurningPoints);
+        
+        
         % Loop so that points can be populated on graph
         % as they are being selected
         for i = 1:numTurningPoints
@@ -163,10 +171,7 @@ while ~(exit)
             if i > 1
                 plot(turningPoint(:,1), turningPoint(:,2), 'ko')
             end
-            
-            clc
-            display(sprintf('Please use the crosshairs on the graph to \n select %d points.', numTurningPoints));
-            
+                        
             % Get the next point
             [nextTurningPointX, nextTurningPointY] = ginput(1);
             turningPoint(i,:) = [nextTurningPointX nextTurningPointY];

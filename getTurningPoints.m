@@ -75,6 +75,8 @@ numTurningPoints = floor(getAndTestInput(request, check1, message1, check2, mess
 %--------------------------------------------------------------------------
 if chunkCutMethod == 1
     [turningPoint(:,1), turningPoint(:,2)] = manualMode(smoothX, smoothY, numTurningPoints, 1);
+elseif chunkCutMethod == 3
+    [turningPoint(:,1), turningPoint(:,2)] = manualMode(smoothX, smoothY, numTurningPoints, 2);
 else
     %--------------------------------------------------------------------------
     % Get user to tell you the pulse height

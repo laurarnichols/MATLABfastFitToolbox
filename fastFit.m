@@ -155,7 +155,7 @@ check2 = 'temp ~= 1 && temp ~= 2';
 message2 = 'Value entered was not an option.';
 choice = getAndTestInput(request, check1, message1, check2, message2);
 
-if choice == 2
+if choice == 2 
     [turningPoints, turningIndices, turningPointsSmooth, turningIndicesSmooth, smoothX, smoothY] = getTurningPoints(x, y, 1);
 end
 

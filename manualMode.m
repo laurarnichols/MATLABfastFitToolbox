@@ -23,7 +23,7 @@ function [turningIndex, turningPoint] = manualMode(x, y, numTurningPoints, selec
 %           x and y - data points
 %           numTurningPoints - user inputted values for 
 %                              number of turning points
-%           selectOnly - used when cutting linear portions;
+%           selectMode - used when cutting linear portions;
 %                        because there are no points to 
 %                        shift yet, the user must select new 
 %                        points
@@ -42,7 +42,7 @@ function [turningIndex, turningPoint] = manualMode(x, y, numTurningPoints, selec
 % If called to select points for linear cutting, then there
 % will be no original turning points. But they should be 
 % there otherwise.
-if selectOnly == 0 && nargin < 6
+if selectMode == 0 && nargin < 6
     error('Not enough input arguments to manualMode.');
 end
 
@@ -57,7 +57,7 @@ while ~(exit)
 %--------------------------------------------------------------------------
     % Ask user if want to shift current points or just select
     % new ones
-    if shiftOrSelect == 2 && selectOnly == 0
+    if shiftOrSelect == 2 && selectMode == 0
         clc
         request = ['\nWould you like to shift or reselect points?' ...
                                 '\n\t 1) Shift' ...
